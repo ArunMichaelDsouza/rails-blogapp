@@ -8,14 +8,23 @@ class ArticlesController < ApplicationController
 	end
 
 	def new
+		error = params[:error]
+		if error == "title"
+			@error = "Title cannot be blank"
+		end
 	end
 
 	def create
 		#render plain: params
 
-		@article = Article.new(params.require(:article).permit(:title, :text))
+		if params[:article][:title] == ""
+			puts "Title is blank" # Logged to console
+			redirect_to new_article_path(:error => "title")
+		else 
+			@article = Article.new(params.require(:article).permit(:title, :text))
 
-		@article.save
-		redirect_to @article
+			@article.save
+			redirect_to @article
+		end
 	end
 end
